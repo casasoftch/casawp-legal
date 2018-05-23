@@ -29,9 +29,9 @@ class Plugin {
       ],
       'vat' => [
         'de' => 'MWST',
-        'fr' => 'Mention juridique',
-        'en' => 'Legal information',
-        'it' => 'Note legali',
+        'fr' => 'TVA',
+        'en' => 'MWST',
+        'it' => 'IVA',
       ]
     ];
 
