@@ -245,11 +245,154 @@ class Plugin {
       }
     }
 
+    public function doReq($apikey, $privateKey, $options, $apiurl){
+        //specify the current UnixTimeStamp
+        $timestamp = time();
+
+        //specify your api key
+        $apikey = $apikey;
+
+        //specify your private key
+        $privatekey = $privateKey;
+
+        //sort the options alphabeticaly and combine it into the checkstring
+        ksort($options);
+        $checkstring = '';
+        foreach ($options as $key => $value) {
+            $checkstring .= $key . $value;
+        }
+        
+        //add private key at end of the checkstring
+        $checkstring .= $privatekey;
+
+        //add the timestamp at the end of the checkstring
+        $checkstring .= $timestamp;
+
+        //hash it to specify the hmac
+        $hmac = hash('sha256', $checkstring, false);
+
+        //combine the query (DONT INCLUDE THE PRIVATE KEY!!!)
+        $query = array(
+            'hmac' => $hmac,
+            'apikey' => $apikey,
+            'timestamp' => $timestamp
+        ) + $options;
+
+        //build url
+        $url = $apiurl . '?' . http_build_query($query);
+
+        $response = false;
+        try {
+            //$url = 'http://casacloud.cloudcontrolapp.com' . '/rest/provider-properties?' . http_build_query($query);
+            $ch = curl_init(); 
+            curl_setopt($ch, CURLOPT_URL, $url); 
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); 
+            curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+            $response = curl_exec($ch); 
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            if($httpCode == 404) {
+                $response = $httpCode;
+            }
+            curl_close($ch); 
+        } catch (Exception $e) {
+            $response =  $e->getMessage() ;
+        }
+
+        //present the result
+        return array(
+            'response' => $response,
+            'url' => $url
+        );
+    }
+
+    public function updateFieldIfEmpty($field, $value) {
+      if (!get_option($field, false)) {
+        update_option( $field, $value );
+        if (is_admin()) {
+          echo '<div class="updated"><p>updated Field: ' . $field . ' with value ' . $value . '</p></div>';
+        } 
+      }
+    }
+
     public function fetchCompanyDataFromGateway($private_key, $public_key){
       if (is_admin()) {
         echo '<div class="updated"><p><strong>' . __('Fetching data', 'casawp' ) . '</strong></p></div>';
       }
       print_r([$private_key, $public_key]);
+
+      $request = array(
+          'apiurl' => 'http://casagateway.ch/rest/fetch-company-data-with-provider-key',
+          'privatekey' => $private_key,
+          'apikey' => $public_key,
+          'options' => array(
+              'debug' => 1
+          )
+      );
+
+      $result = $this->doReq($request['apikey'], $request['privatekey'], $request['options'], $request['apiurl']);
+
+      if (is_admin()) {
+        //echo '<div class="updated"><p>'.print_r($result, true).'</div>';
+      }
+
+      if (isset($result['response']) && $result['response']) {
+        $response = json_decode($result['response'], true);
+        if ($response && isset($response['companies']) && $response['companies'] && isset($response['companies'][0])) {
+          if (is_admin()) {
+            echo '<div class="updated"><p>'.print_r($response['companies'][0], true).'</div>';
+          } 
+          $prefix = 'casawp_legal_';
+
+          if (isset($response['companies'][0]['legalName']) && $response['companies'][0]['legalName']) {
+            $field = $prefix . 'company_legal_name';
+            $this->updateFieldIfEmpty($field, $response['companies'][0]['legalName']);
+          }
+          if (isset($response['companies'][0]['phone']) && $response['companies'][0]['phone']) {
+            $field = $prefix . 'company_phone';
+            $this->updateFieldIfEmpty($field, $response['companies'][0]['phone']);
+          }
+          if (isset($response['companies'][0]['fax']) && $response['companies'][0]['fax']) {
+            $field = $prefix . 'company_fax';
+            $this->updateFieldIfEmpty($field, $response['companies'][0]['fax']);
+          }
+          if (isset($response['companies'][0]['email']) && $response['companies'][0]['email']) {
+            $field = $prefix . 'company_email';
+            $this->updateFieldIfEmpty($field, $response['companies'][0]['email']);
+          }
+          if (isset($response['companies'][0]['websiteUrl']) && $response['companies'][0]['websiteUrl']) {
+            $field = $prefix . 'company_website_url';
+            $this->updateFieldIfEmpty($field, $response['companies'][0]['websiteUrl']);
+          }
+          //add_option($prefix.'company_uid', null);
+          //add_option($prefix.'company_vat', null);
+          if (isset($response['companies'][0]['address']) && $response['companies'][0]['address'] && $response['companies'][0]['address']['street']) {
+            $field = $prefix . 'company_address_street';
+            $this->updateFieldIfEmpty($field, $response['companies'][0]['address']['street']);
+          }
+          if (isset($response['companies'][0]['address']) && $response['companies'][0]['address'] && $response['companies'][0]['address']['streetNumber']) {
+            $field = $prefix . 'company_address_street_number';
+            $this->updateFieldIfEmpty($field, $response['companies'][0]['address']['streetNumber']);
+          }
+          if (isset($response['companies'][0]['address']) && $response['companies'][0]['address'] && $response['companies'][0]['address']['postOfficeBoxNumber']) {
+            $field = $prefix . 'company_address_post_office_box_number';
+            $this->updateFieldIfEmpty($field, $response['companies'][0]['address']['postOfficeBoxNumber']);
+          }
+          if (isset($response['companies'][0]['address']) && $response['companies'][0]['address'] && $response['companies'][0]['address']['postalCode']) {
+            $field = $prefix . 'company_address_postal_code';
+            $this->updateFieldIfEmpty($field, $response['companies'][0]['address']['postalCode']);
+          }
+          if (isset($response['companies'][0]['address']) && $response['companies'][0]['address'] && $response['companies'][0]['address']['locality']) {
+            $field = $prefix . 'company_address_locality';
+            $this->updateFieldIfEmpty($field, $response['companies'][0]['address']['locality']);
+          }
+          //add_option($prefix.'company_person_first_name', null);
+          //add_option($prefix.'company_person_last_name', null);
+          //add_option($prefix.'company_person_email', null);
+
+        }
+       
+      }
+
     }
 
     public function legalPageRenders($content){
