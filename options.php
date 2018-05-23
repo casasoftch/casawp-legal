@@ -8,6 +8,12 @@
 		$casawpLegal->makeSurePagesExist();
 	}
 
+	if (isset($_GET['generate_footmenu_items'])) {
+		echo '<div class="updated"><p><strong>' . __('generati menutia itemito', 'casawp-legal' ) . '</strong></p></div>';
+		global $casawpLegal;
+		$casawpLegal->addToFootmenu();
+	}
+
 	if(isset($_POST['casawp_legal_submit'])) {
 		foreach ($_POST AS $key => $value) {
 			$value = sanitize_text_field($value);
@@ -49,10 +55,10 @@
 		);
 	    echo screen_icon('options-general');
 	    echo '<h2 class="nav-tab-wrapper">';
-	    echo '<div style="float:right;">
-	        <a href="http://wordpress.org/support/view/plugin-reviews/casawp" target="_blank" class="add-new-h2">Rate this plugin</a>
-	        <a href="http://wordpress.org/plugins/casawp/changelog/" target="_blank" class="add-new-h2">Changelog</a>
-	    </div>';
+	    // echo '<div style="float:right;">
+	    //     <a href="http://wordpress.org/support/view/plugin-reviews/casawp" target="_blank" class="add-new-h2">Rate this plugin</a>
+	    //     <a href="http://wordpress.org/plugins/casawp/changelog/" target="_blank" class="add-new-h2">Changelog</a>
+	    // </div>';
 	    $current = isset($_GET['tab']) ? $_GET['tab'] : 'general';
 	    foreach( $tabs as $tab => $name ){
 	        $class = ( $tab == $current ) ? ' nav-tab-active' : '';
@@ -69,12 +75,22 @@
 			$table_end   = '</tbody></table>';
 			switch ($current) {
 				case 'actions': ?>
+					<?php echo $table_start; ?>
 					<tr valign="top">
 						<th scope="row">Generate Pages</th>
 						<td>
-							<a href="?page=casawp_legal&tab=actions&generate_pages">Generate Pages</a>
+							<a href="?page=casawp_legal&tab=actions&generate_pages">Go!</a>
+							<br><small>Generates the pages including WPML translations</small>
 						</td>
 					</tr>
+					<tr valign="top">
+						<th scope="row">Menu auto-add</th>
+						<td>
+							<a href="?page=casawp_legal&tab=actions&generate_footmenu_items">Go!</a>
+							<br><small>Tries to insert the pages into the `footmenu`</small>
+						</td>
+					</tr>
+					<?php echo $table_end; ?>
 					<?php break;
 				case 'person': ?>
 					<?php /******* Person *******/ ?>

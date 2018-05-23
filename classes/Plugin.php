@@ -79,9 +79,69 @@ class Plugin {
       do_action( 'wpml_set_element_language_details', $set_language_args );
   }
 
+  public function addToFootmenu(){
+    if (is_admin()) {
+      echo '<div class="updated"><p><strong>' . __('Gennerating menu items', 'casawp' ) . '</strong></p></div>';
+    }
+
+    $imprintpage = get_option('casawp_legal_imprint', false);
+    $termspage = get_option('casawp_legal_terms', false);
+
+    $location = 'footmenu';
+    $locations = get_nav_menu_locations();
+    $menu_id = (array_key_exists($location, $locations) ?  $locations[ $location ] : false);
+    $menu_exists = false;
+    if ($menu_id) {
+      $menu_exists = wp_get_nav_menu_object($menu_id);
+    }
+
+    // If it doesn't exist, let's create it.
+    if( !$menu_exists){
+        $menu_id = wp_create_nav_menu(__( 'Legal Menu', 'theme' ));
+        if (is_admin()) {
+          echo '<div class="updated"><p><strong>' . __('Menu did not exists so we created one', 'casawp' ) . '</strong></p></div>';
+        }
+        if ($imprintpage) {
+          wp_update_nav_menu_item($menu_id, 0, array(
+              'menu-item-title' => '',
+              'menu-item-object-id' => $imprintpage,
+              'menu-item-object' => 'page',
+              'menu-item-status' => 'publish',
+              'menu-item-type' => 'post_type',
+          ));
+        }
+        if ($termspage) {
+          wp_update_nav_menu_item($menu_id, 0, array(
+              'menu-item-title' => '',
+              'menu-item-object-id' => $termspage,
+              'menu-item-object' => 'page',
+              'menu-item-status' => 'publish',
+              'menu-item-type' => 'post_type',
+          ));
+        }
+
+        // Grab the theme locations and assign our newly-created menu
+        // to the BuddyPress menu location.
+        if( !has_nav_menu( $location ) ){
+            if (is_admin()) {
+              echo '<div class="updated"><p><strong>' . __('Menu was added to location ', 'casawp' ) . '</strong></p></div>';
+            }
+            $locations = get_theme_mod('nav_menu_locations');
+            $locations[$location] = $menu_id;
+            set_theme_mod( 'nav_menu_locations', $locations );
+        }
+    } else {
+      if (is_admin()) {
+          echo '<div class="error"><p><strong>' . __('Menu exists already', 'casawp' ) . '</strong></p></div>';
+        }
+    }
+
+
+  }
+
     public function makeSurePagesExist(){
       if (is_admin()) {
-        echo '<div class="updated"><p><strong>' . __('Gennearating pages', 'casawp' ) . '</strong></p></div>';
+        echo '<div class="updated"><p><strong>' . __('Gennerating pages', 'casawp' ) . '</strong></p></div>';
       }
       
 
