@@ -245,6 +245,10 @@ class Plugin {
       }
     }
 
+    public function fetchCompanyDataFromGateway($private_key, $public_key){
+      
+    }
+
     public function legalPageRenders($content){
       $cur_lang = 'de';
       $prefix = 'casawp_legal_';

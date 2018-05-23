@@ -14,6 +14,13 @@
 		$casawpLegal->addToFootmenu();
 	}
 
+	if (isset($_POST['casawp_fetchdata_from_casaauth'])) {
+		echo '<div class="updated"><p><strong>' . __('fetchito dati a la casaautheto', 'casawp-legal' ) . '</strong></p></div>';
+		$gateway_provider_key = $_POST['casawp_gateway_private_key'];
+		$gateway_public_key = $_POST['casawp_gateway_public_key'];
+		$casawpLegal->fetchCompanyDataFromGateway($gateway_private_key, $gateway_public_key);
+	}
+
 	if(isset($_POST['casawp_legal_submit'])) {
 		foreach ($_POST AS $key => $value) {
 			$value = sanitize_text_field($value);
@@ -110,7 +117,7 @@
 						</th>
 						<td>
 							<a href="?page=casawp_legal&tab=actions&generate_footmenu_items" class="button-primary">Go!</a>
-							<br><small>Tries to insert the pages into the `footmenu`</small>
+							<br><small>Tries create a "Legal Menu" and tries to insert it into `footmenu`</small>
 							<?php 
 								if (function_exists('icl_object_id')) {
 						          echo '<br><small><strong>' . __('Your using WPML, go ahead and sync the menu here after adding it: ', 'casawp' ) . '<a href="/wp-admin/admin.php?page=sitepress-multilingual-cms%2Fmenu%2Fmenu-sync%2Fmenus-sync.php">Link</a></strong></small>';
@@ -124,18 +131,11 @@
 							Fetch Data from CASAAUTH
 						</th>
 						<td>
-							<a href="?page=casawp_legal&tab=actions&fetchdata_from_casaauth" class="button-primary">Go!</a>
+							<br><strong>CASAGATEWAY provider</strong>
+							<br><input style="width: 100%" type="text" name="casawp_gateway_public_key" value="" placeholder="API Public Key" />
+							<br><input style="width: 100%" type="text" name="casawp_gateway_private_key" value="" placeholder="API Private Key" />
+							<br><input type="submit" name="casawp_fetchdata_from_casaauth" id="submit" class="button button-primary" value="Go!">
 							<br><small>Tries to fetch the data from casaauth servers (only fills empty fields!)</small>
-						</td>
-					</tr>
-					<tr><th><hr></th><td><hr></td></tr>
-					<tr valign="top">
-						<th scope="row">
-							Fetch Data from other Fields
-						</th>
-						<td>
-							<a href="?page=casawp_legal&tab=actions&fetchdata_from_other" class="button-primary">Go!</a>
-							<br><small>Tries to fetch the data from fields derived from other theme options and plugins (only fills empty fields!)</small>
 						</td>
 					</tr>
 					<?php echo $table_end; ?>
