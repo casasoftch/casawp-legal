@@ -124,8 +124,18 @@
 							Fetch Data from CASAAUTH
 						</th>
 						<td>
-							<a href="?page=casawp_legal&tab=actions&fetch_from_casaauth" class="button-primary">Go!</a>
-							<br><small>Tries to fetch the data from casaauth servers</small>
+							<a href="?page=casawp_legal&tab=actions&fetchdata_from_casaauth" class="button-primary">Go!</a>
+							<br><small>Tries to fetch the data from casaauth servers (only fills empty fields!)</small>
+						</td>
+					</tr>
+					<tr><th><hr></th><td><hr></td></tr>
+					<tr valign="top">
+						<th scope="row">
+							Fetch Data from other Fields
+						</th>
+						<td>
+							<a href="?page=casawp_legal&tab=actions&fetchdata_from_other" class="button-primary">Go!</a>
+							<br><small>Tries to fetch the data from fields derived from other theme options and plugins (only fills empty fields!)</small>
 						</td>
 					</tr>
 					<?php echo $table_end; ?>
