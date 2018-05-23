@@ -1,0 +1,37 @@
+.casawp-legal__page--terms ol
+{
+    list-style-type: none;
+    counter-reset: section;
+}
+.casawp-legal__page--terms ol li
+{
+    counter-increment: section;
+}
+
+.casawp-legal__page--terms ol li:before
+{
+    content: counters(section, '.') '.\0000a0\0000a0';
+}
+
+.casawp-legal__page--terms
+{
+    counter-reset: h2counter;
+}
+.casawp-legal__page--terms > h1
+{
+    counter-reset: h2counter;
+}
+.casawp-legal__page--terms > h2
+{
+    counter-reset: h3counter;
+}
+.casawp-legal__page--terms > h2:before
+{
+    content: counter(h2counter) '.\0000a0\0000a0';
+    counter-increment: h2counter;
+}
+.casawp-legal__page--terms > h3:before
+{
+	counter-increment: h3counter;
+    content: counter(h2counter) '.' counter(h3counter) '.\0000a0\0000a0';
+}

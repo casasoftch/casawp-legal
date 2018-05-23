@@ -1,6 +1,13 @@
 <?php
 	if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+
+	if (isset($_GET['generate_pages'])) {
+		echo '<div class="updated"><p><strong>' . __('generati pagina', 'casawp-legal' ) . '</strong></p></div>';
+		global $casawpLegal;
+		$casawpLegal->makeSurePagesExist();
+	}
+
 	if(isset($_POST['casawp_legal_submit'])) {
 		print_r($_POST);
 		foreach ($_POST AS $key => $value) {
@@ -38,6 +45,7 @@
 		// Tabs
 		$tabs = array(
 			'general'     => 'Generell',
+			'actions'     => 'Aktionen',
 		);
 	    echo screen_icon('options-general');
 	    echo '<h2 class="nav-tab-wrapper">';
@@ -48,7 +56,7 @@
 	    $current = isset($_GET['tab']) ? $_GET['tab'] : 'general';
 	    foreach( $tabs as $tab => $name ){
 	        $class = ( $tab == $current ) ? ' nav-tab-active' : '';
-	        echo "<a class='nav-tab$class' href='?page=casawp&tab=$tab'>$name</a>";
+	        echo "<a class='nav-tab$class' href='?page=casawp_legal&tab=$tab'>$name</a>";
 
 	    }
 	    echo '</h2>';
@@ -60,6 +68,9 @@
 			$table_start = '<table class="form-table"><tbody>';
 			$table_end   = '</tbody></table>';
 			switch ($current) {
+				case 'actions': ?>
+				<a href="?page=casawp_legal&tab=actions&generate_pages">Generate Pages</a>
+				<?php break;
 				case 'general':
 				default:
 					?>
@@ -104,24 +115,24 @@
 						<?php 
 							$prefix = 'casawp_legal_';
 							$fields = array();
-							$fields[] = $prefix.'company_legal_name';
-							$fields[] = $prefix.'company_phone';
-							$fields[] = $prefix.'company_fax';
-							$fields[] = $prefix.'company_email';
-							$fields[] = $prefix.'company_uid';
-							$fields[] = $prefix.'company_vat';
-							$fields[] = $prefix.'company_address_street';
-							$fields[] = $prefix.'company_address_street_number';
-							$fields[] = $prefix.'company_address_post_office_box_number';
-							$fields[] = $prefix.'company_address_postal_code';
-							$fields[] = $prefix.'company_address_locality';
+							$fields[] = ['name' => $prefix.'company_legal_name', 'label' => 'legal_name'];
+							$fields[] = ['name' => $prefix.'company_phone', 'label' => 'phone'];
+							$fields[] = ['name' => $prefix.'company_fax', 'label' => 'fax'];
+							$fields[] = ['name' => $prefix.'company_email', 'label' => 'email'];
+							$fields[] = ['name' => $prefix.'company_uid', 'label' => 'uid'];
+							$fields[] = ['name' => $prefix.'company_vat', 'label' => 'vat'];
+							$fields[] = ['name' => $prefix.'company_address_street', 'label' => 'street'];
+							$fields[] = ['name' => $prefix.'company_address_street_number', 'label' => 'street_number'];
+							$fields[] = ['name' => $prefix.'company_address_post_office_box_number', 'label' => 'post_office_box_number'];
+							$fields[] = ['name' => $prefix.'company_address_postal_code', 'label' => 'postal_code'];
+							$fields[] = ['name' => $prefix.'company_address_locality', 'label' => 'locality'];
 							foreach ($fields as $field) : ?>
 								<tr valign="top">
-									<th scope="row"><?= $field ?></th>
+									<th scope="row"><?= $field['label'] ?></th>
 									<td>
 										<fieldset>
-											<?php $name = $field; ?>
-											<?php $text = $field; ?>
+											<?php $name = $field['name']; ?>
+											<?php $text = $field['label']; ?>
 											<legend class="screen-reader-text"><span><?= $text ?></span></legend>
 											<p>
 												<input type="text" placeholder="" name="<?php echo $name ?>" value="<?= get_option($name) ?>" id="<?php echo $name; ?>" class="large-text" />

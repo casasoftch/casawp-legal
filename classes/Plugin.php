@@ -14,6 +14,21 @@ class Plugin {
     public $configuration = array();
     public $m = false;
 
+    public $page_titles = [
+      'imprint' => [
+        'de' => 'Impressum',
+        'fr' => 'Impressum',
+        'en' => 'Imprint',
+        'it' => 'Impressum',
+      ],
+      'terms' => [
+        'de' => 'Datenschutz',
+        'fr' => 'Mention juridique',
+        'en' => 'Legal information',
+        'it' => 'Note legali',
+      ]
+    ];
+
     public function __construct($configuration){
         $this->configuration = $configuration;
         $this->locale = substr(get_bloginfo('language'), 0, 2);
@@ -26,7 +41,7 @@ class Plugin {
         add_action('plugins_loaded', array($this, 'setTranslation'));
 
         // auto add pages if missing for private users
-        add_action('after_setup_theme', array($this, 'makeSurePagesExist') );
+        //add_action('after_setup_theme', array($this, 'makeSurePagesExist') );
 
         // hook failed login
         add_action( 'wp_login_failed', array($this, 'privateUserRedirectToOrigin') );
@@ -37,19 +52,47 @@ class Plugin {
 
     }
 
-    public function makeSurePagesExist(){
-      /*
-        DE: Datenschutz
-        EN: Legal information
-        FR: Mention juridique
-        IT: Note legali
+    public function wpml_connect_page($original, $translation, $lang) {
+   
+      // https://wpml.org/wpml-hook/wpml_element_type/
+      $wpml_element_type = apply_filters( 'wpml_element_type', 'page' );
+       
+      // get the language info of the original page
+      // https://wpml.org/wpml-hook/wpml_element_language_details/
+      $get_language_args = array('element_id' => $original, 'element_type' => 'page' );
+      $original_post_language_info = apply_filters( 'wpml_element_language_details', null, $get_language_args );
+       
+      $set_language_args = array(
+          'element_id'    => $translation,
+          'element_type'  => $wpml_element_type,
+          'trid'   => $original_post_language_info->trid,
+          'language_code'   => $lang,
+          'source_language_code' => $original_post_language_info->language_code
+      );
 
-        DE: Impressum
-        EN: Imprint
-        FR: Impressum
-        IT: Impressum
-      */
+      do_action( 'wpml_set_element_language_details', $set_language_args );
+  }
+
+    public function makeSurePagesExist(){
+      if (is_admin()) {
+        echo '<div class="updated"><p><strong>' . __('Gennearating pages', 'casawp' ) . '</strong></p></div>';
+      }
+      
+
+      
+      $main_lang = 'de';
+      if (function_exists('icl_object_id') ) {
+        $wpml_options = get_option( 'icl_sitepress_settings', false);
+        if ($wpml_options) {
+          $main_lang = $wpml_options['default_language'];
+        }
+      }
+
       $imprintpage = get_option('casawp_legal_imprint', false);
+      // if ($imprintpage) {
+      //   $imprintpagepost = get_post($imprintpage);
+      // }
+      
       if ( 'publish' != get_post_status ( $imprintpage ) ) {
         $imprintpage = false;
       }
@@ -57,7 +100,7 @@ class Plugin {
         $page = get_page_by_title('Impressum');
         if (!$page) {
           $pageId = wp_insert_post(array(
-            'post_title' => 'Impressum',
+            'post_title' => (array_key_exists($main_lang, $this->page_titles['imprint']) ? $this->page_titles['imprint'][$main_lang] : 'imprint'),
             'post_status' => 'publish',
             'post_author'   => 1,
             'post_content'  => '<p>...</p>',
@@ -77,18 +120,37 @@ class Plugin {
         $termspage = false;
       }
       if (!$termspage) {
+    
         $page = get_page_by_title('Datenschutz');
         if (!$page) {
           $pageId = wp_insert_post(array(
-            'post_title' => 'Datenschutz',
+            'post_title' => (array_key_exists($main_lang, $this->page_titles['terms']) ? $this->page_titles['terms'][$main_lang] : 'terms'),
             'post_status' => 'publish',
             'post_author'   => 1,
-            'post_content'  => '<p>...</p>',
+            'post_content'  => '<p style="display:none">&nbsp;</p>',
             'post_type' => 'page'
           ));
           if (is_admin()) {
             echo '<div class="updated"><p><strong>' . __('Gennerated terms page', 'casawp' ) . ' ' .$pageId . '</strong></p></div>';
           }
+          if (function_exists('icl_object_id') && get_option( 'icl_sitepress_settings', false )) {
+            foreach (array_keys($this->page_titles['terms']) as $altLang) {
+              if ($altLang !== $main_lang) {
+                $altPageId = wp_insert_post(array(
+                  'post_title' => $this->page_titles['terms'][$altLang],
+                  'post_status' => 'publish',
+                  'post_author'   => 1,
+                  'post_content'  => '<p style="display:none">&nbsp;</p>',
+                  'post_type' => 'page'
+                ));
+                $this->wpml_connect_page($pageId, $altPageId, $altLang);  
+                if (is_admin()) {
+                  echo '<div class="updated"><p><strong>' . __('Gennerated terms page', 'casawp' ) . ' for ' . $altLang . ' ' .$altPageId . '</strong></p></div>';
+                }
+              }
+            }
+          }
+          
         } else {
           $pageId = $page->ID;
         }
@@ -98,15 +160,22 @@ class Plugin {
 
     public function legalPageRenders($content){
       $prefix = 'casawp_legal_';
+      $post_ID = get_the_ID();
+      $default_post_ID = $post_ID;
+      if (function_exists('icl_object_id') && get_option( 'icl_sitepress_settings', false )) {
+        $options = get_option( 'icl_sitepress_settings' );
+        $default_language = $options['default_language'];
+        $default_post_ID = apply_filters( 'wpml_object_id', $post_ID, 'page', false, $default_language );
+      }
 
-      switch (get_the_ID()) {
+      switch ($default_post_ID) {
         case get_option('casawp_legal_imprint', false):
           if (is_file(CASAWP_LEGAL_PLUGIN_DIR . 'templates/imprint-'.$this->locale.'.html')) {
             $template_file = CASAWP_LEGAL_PLUGIN_DIR . 'templates/imprint-'.$this->locale.'.html';
           } else {
             $template_file = CASAWP_LEGAL_PLUGIN_DIR . 'templates/imprint-de.html';
           }
-          $content .= $this->m->render(
+          $content .= '<div class="casawp-legal__page casawp-legal__page--imprint">'.$this->m->render(
             file_get_contents($template_file), 
             array(
               'company' => [
@@ -125,7 +194,7 @@ class Plugin {
                 'locality' => get_option($prefix.'company_address_locality', null),
               ]
             )
-          );
+          ).'</div>';
           break;
         case get_option('casawp_legal_terms', false):
           if (is_file(CASAWP_LEGAL_PLUGIN_DIR . 'templates/terms-'.$this->locale.'.html')) {
@@ -133,7 +202,7 @@ class Plugin {
           } else {
             $template_file = CASAWP_LEGAL_PLUGIN_DIR . 'templates/terms-de.html';
           }
-          $content .= $this->m->render(
+          $content .= '<div class="casawp-legal__page casawp-legal__page--terms">'.$this->m->render(
             file_get_contents($template_file), 
             array(
               'company' => [
@@ -152,7 +221,7 @@ class Plugin {
                 'locality' => get_option($prefix.'company_address_locality', null),
               ]
             )
-          );
+          ).'</div>';
           break;
       }
 
@@ -193,8 +262,9 @@ class Plugin {
     }
 
     function registerScriptsAndStyles(){
+        wp_register_style( 'casawp_legal_css', CASAWP_LEGAL_PLUGIN_URL . 'plugin-assets/style.css' );
+        wp_enqueue_style( 'casawp_legal_css' );
         //wp_register_style( 'casawp_legal_css', CASAWP_LEGAL_PLUGIN_URL . 'plugin-assets/global/casawp.css' );
-        //wp_enqueue_style( 'casawp_legal_css' );
         //wp_enqueue_script('casawp', CASAWP_LEGAL_PLUGIN_URL . 'plugin-assets/global/casawp.js', array( 'jquery' ), false, true );
         //get_option( 'casawp_legal_load_chosen', 1 )
     }
