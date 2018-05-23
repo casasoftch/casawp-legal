@@ -77,17 +77,55 @@
 				case 'actions': ?>
 					<?php echo $table_start; ?>
 					<tr valign="top">
-						<th scope="row">Generate Pages</th>
+						<th scope="row">
+							Generate Pages
+							<?php if (get_option('casawp_legal_imprint', false)) : ?>
+								<br><small>✔ Imprint exists</small>
+							<?php endif ?>
+							<?php if (get_option('casawp_legal_terms', false)) : ?>
+								<br><small>✔ Terms exists</small>
+							<?php endif ?>
+						</th>
 						<td>
-							<a href="?page=casawp_legal&tab=actions&generate_pages">Go!</a>
+							<a href="?page=casawp_legal&tab=actions&generate_pages" class="button-primary">Go!</a>
 							<br><small>Generates the pages including WPML translations</small>
 						</td>
 					</tr>
+					<tr><th><hr></th><td><hr></td></tr>
 					<tr valign="top">
-						<th scope="row">Menu auto-add</th>
+						<th scope="row">
+							Menu auto-add
+							<?php 
+								$location = 'footmenu';
+							    $locations = get_nav_menu_locations();
+							    $menu_id = (array_key_exists($location, $locations) ?  $locations[ $location ] : false);
+							    $menu_exists = false;
+							    if ($menu_id) {
+							      $menu_exists = wp_get_nav_menu_object($menu_id);
+							    }
+							?>
+							<?php if ($menu_exists) : ?>
+								<br><small>✔ Menu exists</small>
+							<?php endif ?>
+						</th>
 						<td>
-							<a href="?page=casawp_legal&tab=actions&generate_footmenu_items">Go!</a>
+							<a href="?page=casawp_legal&tab=actions&generate_footmenu_items" class="button-primary">Go!</a>
 							<br><small>Tries to insert the pages into the `footmenu`</small>
+							<?php 
+								if (function_exists('icl_object_id')) {
+						          echo '<br><small><strong>' . __('Your using WPML, go ahead and sync the menu here after adding it: ', 'casawp' ) . '<a href="/wp-admin/admin.php?page=sitepress-multilingual-cms%2Fmenu%2Fmenu-sync%2Fmenus-sync.php">Link</a></strong></small>';
+						        }
+							?>
+						</td>
+					</tr>
+					<tr><th><hr></th><td><hr></td></tr>
+					<tr valign="top">
+						<th scope="row">
+							Fetch Data from CASAAUTH
+						</th>
+						<td>
+							<a href="?page=casawp_legal&tab=actions&fetch_from_casaauth" class="button-primary">Go!</a>
+							<br><small>Tries to fetch the data from casaauth servers</small>
 						</td>
 					</tr>
 					<?php echo $table_end; ?>
@@ -147,6 +185,7 @@
 
 
 						<?php echo $table_end; ?>
+						<p class="submit"><input type="submit" name="casawp_legal_submit" id="submit" class="button button-primary" value="Änderungen übernehmen"></p>
 					<?php break;
 				case 'general':
 				default:
@@ -303,9 +342,9 @@
 
 
 						<?php echo $table_end; ?>
+						<p class="submit"><input type="submit" name="casawp_legal_submit" id="submit" class="button button-primary" value="Änderungen übernehmen"></p>
 					<?php
 					break;
 			}
 		?>
-		<p class="submit"><input type="submit" name="casawp_legal_submit" id="submit" class="button button-primary" value="Änderungen übernehmen"></p>
 	</form>

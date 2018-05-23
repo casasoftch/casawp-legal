@@ -130,6 +130,10 @@ class Plugin {
             $locations[$location] = $menu_id;
             set_theme_mod( 'nav_menu_locations', $locations );
         }
+
+        if (is_admin() && function_exists('icl_object_id')) {
+          echo '<div class="updated"><p><strong>' . __('Your using WPML, go ahead and sync the menu here: ', 'casawp' ) . ': <a href="/wp-admin/admin.php?page=sitepress-multilingual-cms%2Fmenu%2Fmenu-sync%2Fmenus-sync.php">Link Here</a></strong></p></div>';
+        }
     } else {
       if (is_admin()) {
           echo '<div class="error"><p><strong>' . __('Menu exists already', 'casawp' ) . '</strong></p></div>';
