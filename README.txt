@@ -7,7 +7,7 @@ Tested up to: 4.9.6
 Author: Casasoft AG
 Author URI: https://casasoft.ch
 License: GPL2
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 
 == Description ==
 
@@ -21,6 +21,9 @@ Stable tag: 1.0.1
 3. Check out yourdomain.com/impressum to verify that it works
 
 == Changelog ==
+
+= 1.0.2 =
+* fix: lots
 
 = 1.0.1 =
 * new: actions
