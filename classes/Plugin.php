@@ -279,6 +279,7 @@ class Plugin {
                 'fax' => get_option($prefix . 'company_fax', null),
                 'email' => get_option($prefix . 'company_email', null),
                 'uid' => get_option($prefix . 'company_uid', null),
+                'website_url' => get_option($prefix . 'company_website_url', null),
                 'vat' => (get_option($prefix . 'company_vat', false) && array_key_exists($cur_lang, $this->translations['vat']) ? $this->translations['vat'][$cur_lang] : ''),
               ],
               'address' => [
@@ -311,6 +312,7 @@ class Plugin {
                 'fax' => get_option($prefix . 'company_fax', null),
                 'email' => get_option($prefix . 'company_email', null),
                 'uid' => get_option($prefix . 'company_uid', null),
+                'website_url' => get_option($prefix . 'company_website_url', null),
                 'vat' => (get_option($prefix . 'company_vat', false) && array_key_exists($cur_lang, $this->translations['vat']) ? $this->translations['vat'][$cur_lang] : ''),
               ],
               'address' => [

@@ -1,14 +1,31 @@
 <p><strong>{{company.legal_name}}</strong><br>
-{{address.street}} {{address.street_number}}<br>
-{{address.post_office_box_number}}<br>
-{{address.postal_code}} {{address.locality}}</p>
-<p>Tel {{company.phone}}<br>
-Fax {{company.fax}}</p>
-<p><a href="mailto:{{company.email}}">{{company.email}}</a></p>
-<p>UID: {{company.uid}} {{company.vat}}</p>
-<br>
+{{address.street}} {{address.street_number}}
+{{#address.post_office_box_number}}
+	<br>{{address.post_office_box_number}}
+{{/address.post_office_box_number}}
+{{#company.postal_code}}
+	<br>{{address.postal_code}} {{address.locality}}
+{{/company.postal_code}}
+</p>
+<p>
+	Tel {{company.phone}}
+{{#company.fax}}
+	<br>Fax {{company.fax}}
+{{/company.fax}}
+{{#company.email}}
+	<br><a href="mailto:{{company.email}}">{{company.email}}</a>
+{{/company.email}}
+{{#company.website_url}}
+	<br><a href="{{company.website_url}}">{{company.website_url}}</a>
+{{/company.website_url}}
+</p>
+
+{{#company.uid}}
+	<p><br>UID: {{company.uid}} {{company.vat}}</p>
+{{/company.uid}}
+
 <p><strong>Realisierung</strong></p>
 <p><strong>Casasoft AG</strong><br>
 Müligässli 1<br>
 8598 Bottighofen<br>
-<a href="{{company.website_url}}">{{company.website_url}}</a></p>
+<a href="https://casasoft.ch">www.casasoft.ch</a></p>
