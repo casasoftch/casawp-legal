@@ -1,0 +1,13 @@
+{
+    "name": "casasoft/casawp-legal",
+    "type": "project",
+    "require": {
+        "mustache/mustache": "^2.12"
+    },
+    "authors": [
+        {
+            "name": "Jens Stalder",
+            "email": "jens.stalder@casasoft.ch"
+        }
+    ]
+}
