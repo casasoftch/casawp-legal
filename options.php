@@ -44,6 +44,7 @@
 		// Tabs
 		$tabs = array(
 			'general'     => 'Allgemein',
+			'person'      => 'Datenschutzbeauftragter',
 			'actions'     => 'Aktionen',
 		);
 	    echo screen_icon('options-general');
@@ -68,13 +69,69 @@
 			$table_end   = '</tbody></table>';
 			switch ($current) {
 				case 'actions': ?>
-				<tr valign="top">
-					<th scope="row">Generate Pages</th>
-					<td>
-						<a href="?page=casawp_legal&tab=actions&generate_pages">Generate Pages</a>
-					</td>
-				</tr>
-				<?php break;
+					<tr valign="top">
+						<th scope="row">Generate Pages</th>
+						<td>
+							<a href="?page=casawp_legal&tab=actions&generate_pages">Generate Pages</a>
+						</td>
+					</tr>
+					<?php break;
+				case 'person': ?>
+					<?php /******* Person *******/ ?>
+						<?php echo $table_start; ?>
+							
+						<?php 
+							$prefix = 'casawp_legal_';
+							$fields = array();
+							$fields[] = [
+								'name' => $prefix.'company_person_first_name',
+								'label' => 'Vorname',
+								'placeholder' => '',
+								'type' => 'text',
+								'intructions' => '',
+							];
+							$fields[] = [
+								'name' => $prefix.'company_person_last_name',
+								'label' => 'Nachname',
+								'placeholder' => '',
+								'type' => 'text',
+								'intructions' => '',
+							];
+							$fields[] = [
+								'name' => $prefix.'company_person_email',
+								'label' => 'E-Mail',
+								'placeholder' => '',
+								'type' => 'text',
+								'intructions' => '',
+							];
+
+							foreach ($fields as $field) : ?>
+								<?php $name = $field['name']; ?>
+								<?php $text = $field['label']; ?>
+								<tr valign="top">
+									<th scope="row"><?= $field['label'] ?></th>
+									<td>
+										<?php if ($field['type'] === 'text'): ?>
+											<fieldset>
+												<legend class="screen-reader-text"><span><?= $text ?></span></legend>
+												<p>
+													<input type="text" placeholder="<?= $field['placeholder'] ?>" name="<?php echo $name ?>" value="<?= get_option($name) ?>" id="<?php echo $name; ?>" class="large-text" />
+												</p>
+											</fieldset>
+										<?php elseif ($field['type'] === 'bool'): ?>
+											<fieldset>
+												<legend class="screen-reader-text"><span><?= $text ?></span></legend>
+												<label>
+													<input name="<?php echo $name ?>" type="checkbox" value="1" <?php echo (get_option($name) == '1' ? 'checked="checked"' : ''); ?>> <?php echo $field['intructions'] ?>
+												</label>
+										<?php endif ?>
+									</td>
+								</tr>
+							<?php endforeach ?>
+
+
+						<?php echo $table_end; ?>
+					<?php break;
 				case 'general':
 				default:
 					?>
@@ -163,10 +220,10 @@
 							];
 							$fields[] = [
 								'name' => $prefix.'company_vat',
-								'label' => 'MWST',
+								'label' => 'Mehrwertsteuerpflicht',
 								'placeholder' => '',
 								'type' => 'bool',
-								'intructions' => 'Plichtig',
+								'intructions' => 'Ja',
 							];
 							$fields[] = [
 								'name' => $prefix.'company_address_street',
@@ -203,6 +260,7 @@
 								'type' => 'text',
 								'intructions' => '',
 							];
+
 							foreach ($fields as $field) : ?>
 								<?php $name = $field['name']; ?>
 								<?php $text = $field['label']; ?>

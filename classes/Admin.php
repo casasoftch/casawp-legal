@@ -20,11 +20,16 @@ class Admin {
 		add_option($prefix.'company_website_url', null);
 		add_option($prefix.'company_uid', null);
 		add_option($prefix.'company_vat', null);
+
 		add_option($prefix.'company_address_street', null);
 		add_option($prefix.'company_address_street_number', null);
 		add_option($prefix.'company_address_post_office_box_number', null);
 		add_option($prefix.'company_address_postal_code', null);
 		add_option($prefix.'company_address_locality', null);
+
+		add_option($prefix.'company_person_first_name', null);
+		add_option($prefix.'company_person_last_name', null);
+		add_option($prefix.'company_person_email', null);
 
 	}
 

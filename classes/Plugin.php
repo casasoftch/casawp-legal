@@ -14,7 +14,7 @@ class Plugin {
     public $configuration = array();
     public $m = false;
 
-    public $page_titles = [
+    public $translations = [
       'imprint' => [
         'de' => 'Impressum',
         'fr' => 'Impressum',
@@ -23,6 +23,12 @@ class Plugin {
       ],
       'terms' => [
         'de' => 'Datenschutz',
+        'fr' => 'Mention juridique',
+        'en' => 'Legal information',
+        'it' => 'Note legali',
+      ],
+      'vat' => [
+        'de' => 'MWST',
         'fr' => 'Mention juridique',
         'en' => 'Legal information',
         'it' => 'Note legali',
@@ -100,7 +106,7 @@ class Plugin {
         $page = get_page_by_title('Impressum');
         if (!$page) {
           $pageId = wp_insert_post(array(
-            'post_title' => (array_key_exists($main_lang, $this->page_titles['imprint']) ? $this->page_titles['imprint'][$main_lang] : 'imprint'),
+            'post_title' => (array_key_exists($main_lang, $this->translations['imprint']) ? $this->translations['imprint'][$main_lang] : 'imprint'),
             'post_status' => 'publish',
             'post_author'   => 1,
             'post_content'  => '<p>...</p>',
@@ -108,6 +114,23 @@ class Plugin {
           ));
           if (is_admin()) {
             echo '<div class="updated"><p><strong>' . __('Gennerated imprint page', 'casawp' ) . ' ' .$pageId . '</strong></p></div>';
+          }
+          if (function_exists('icl_object_id') && get_option( 'icl_sitepress_settings', false )) {
+            foreach (array_keys($this->translations['imprint']) as $altLang) {
+              if ($altLang !== $main_lang) {
+                $altPageId = wp_insert_post(array(
+                  'post_title' => $this->translations['imprint'][$altLang],
+                  'post_status' => 'publish',
+                  'post_author'   => 1,
+                  'post_content'  => '<p style="display:none">&nbsp;</p>',
+                  'post_type' => 'page'
+                ));
+                $this->wpml_connect_page($pageId, $altPageId, $altLang);  
+                if (is_admin()) {
+                  echo '<div class="updated"><p><strong>' . __('Gennerated imprint page', 'casawp' ) . ' for ' . $altLang . ' ' .$altPageId . '</strong></p></div>';
+                }
+              }
+            }
           }
         } else {
           $pageId = $page->ID;
@@ -124,7 +147,7 @@ class Plugin {
         $page = get_page_by_title('Datenschutz');
         if (!$page) {
           $pageId = wp_insert_post(array(
-            'post_title' => (array_key_exists($main_lang, $this->page_titles['terms']) ? $this->page_titles['terms'][$main_lang] : 'terms'),
+            'post_title' => (array_key_exists($main_lang, $this->translations['terms']) ? $this->translations['terms'][$main_lang] : 'terms'),
             'post_status' => 'publish',
             'post_author'   => 1,
             'post_content'  => '<p style="display:none">&nbsp;</p>',
@@ -134,10 +157,10 @@ class Plugin {
             echo '<div class="updated"><p><strong>' . __('Gennerated terms page', 'casawp' ) . ' ' .$pageId . '</strong></p></div>';
           }
           if (function_exists('icl_object_id') && get_option( 'icl_sitepress_settings', false )) {
-            foreach (array_keys($this->page_titles['terms']) as $altLang) {
+            foreach (array_keys($this->translations['terms']) as $altLang) {
               if ($altLang !== $main_lang) {
                 $altPageId = wp_insert_post(array(
-                  'post_title' => $this->page_titles['terms'][$altLang],
+                  'post_title' => $this->translations['terms'][$altLang],
                   'post_status' => 'publish',
                   'post_author'   => 1,
                   'post_content'  => '<p style="display:none">&nbsp;</p>',
@@ -159,6 +182,7 @@ class Plugin {
     }
 
     public function legalPageRenders($content){
+      $cur_lang = 'de';
       $prefix = 'casawp_legal_';
       $post_ID = get_the_ID();
       $default_post_ID = $post_ID;
@@ -184,7 +208,7 @@ class Plugin {
                 'fax' => get_option($prefix . 'company_fax', null),
                 'email' => get_option($prefix . 'company_email', null),
                 'uid' => get_option($prefix . 'company_uid', null),
-                'vat' => get_option($prefix . 'company_vat', null),
+                'vat' => (get_option($prefix . 'company_vat', false) && array_key_exists($cur_lang, $this->translations['vat']) ? $this->translations['vat'][$cur_lang] : ''),
               ],
               'address' => [
                 'street' => get_option($prefix.'company_address_street', null),
@@ -192,6 +216,11 @@ class Plugin {
                 'post_office_box_number' => get_option($prefix.'company_address_post_office_box_number', null),
                 'postal_code' => get_option($prefix.'company_address_postal_code', null),
                 'locality' => get_option($prefix.'company_address_locality', null),
+              ],
+              'person' => [
+                'first_name' => get_option($prefix.'company_person_first_name', null),
+                'last_name' => get_option($prefix.'company_person_last_name', null),
+                'email' => get_option($prefix.'company_person_email', null),
               ]
             )
           ).'</div>';
@@ -211,7 +240,7 @@ class Plugin {
                 'fax' => get_option($prefix . 'company_fax', null),
                 'email' => get_option($prefix . 'company_email', null),
                 'uid' => get_option($prefix . 'company_uid', null),
-                'vat' => get_option($prefix . 'company_vat', null),
+                'vat' => (get_option($prefix . 'company_vat', false) && array_key_exists($cur_lang, $this->translations['vat']) ? $this->translations['vat'][$cur_lang] : ''),
               ],
               'address' => [
                 'street' => get_option($prefix.'company_address_street', null),
@@ -219,6 +248,11 @@ class Plugin {
                 'post_office_box_number' => get_option($prefix.'company_address_post_office_box_number', null),
                 'postal_code' => get_option($prefix.'company_address_postal_code', null),
                 'locality' => get_option($prefix.'company_address_locality', null),
+              ],
+              'person' => [
+                'first_name' => get_option($prefix.'company_person_first_name', null),
+                'last_name' => get_option($prefix.'company_person_last_name', null),
+                'email' => get_option($prefix.'company_person_email', null),
               ]
             )
           ).'</div>';
