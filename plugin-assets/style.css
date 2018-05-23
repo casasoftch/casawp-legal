@@ -7,12 +7,10 @@
 {
     counter-increment: section;
 }
-
 .casawp-legal__page--terms ol li:before
 {
     content: counters(section, '.') '.\0000a0\0000a0';
 }
-
 .casawp-legal__page--terms
 {
     counter-reset: h2counter;

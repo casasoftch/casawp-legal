@@ -9,7 +9,6 @@
 	}
 
 	if(isset($_POST['casawp_legal_submit'])) {
-		print_r($_POST);
 		foreach ($_POST AS $key => $value) {
 			$value = sanitize_text_field($value);
 			if (substr($key, 0, 12) == 'casawp_legal') {
@@ -22,7 +21,7 @@
 			case 'general':
 			default:
 				$checkbox_traps = array(
-					'casawp_legal_testoption',
+					'company_vat',
 				);
 				break;
 		}
@@ -44,7 +43,7 @@
 	<?php
 		// Tabs
 		$tabs = array(
-			'general'     => 'Generell',
+			'general'     => 'Allgemein',
 			'actions'     => 'Aktionen',
 		);
 	    echo screen_icon('options-general');
@@ -69,7 +68,12 @@
 			$table_end   = '</tbody></table>';
 			switch ($current) {
 				case 'actions': ?>
-				<a href="?page=casawp_legal&tab=actions&generate_pages">Generate Pages</a>
+				<tr valign="top">
+					<th scope="row">Generate Pages</th>
+					<td>
+						<a href="?page=casawp_legal&tab=actions&generate_pages">Generate Pages</a>
+					</td>
+				</tr>
 				<?php break;
 				case 'general':
 				default:
@@ -77,7 +81,7 @@
 						<?php /******* General *******/ ?>
 						<?php echo $table_start; ?>
 							<tr valign="top">
-								<th scope="row">Impressum Seite</th>
+								<th scope="row">Impressum</th>
 								<td>
 									<fieldset>
 										<?php $name = 'casawp_legal_imprint'; ?>
@@ -94,7 +98,7 @@
 								</td>
 							</tr>
 							<tr valign="top">
-								<th scope="row">Datenschutz Seite</th>
+								<th scope="row">Datenschutz</th>
 								<td>
 									<fieldset>
 										<?php $name = 'casawp_legal_terms'; ?>
@@ -115,29 +119,110 @@
 						<?php 
 							$prefix = 'casawp_legal_';
 							$fields = array();
-							$fields[] = ['name' => $prefix.'company_legal_name', 'label' => 'legal_name'];
-							$fields[] = ['name' => $prefix.'company_phone', 'label' => 'phone'];
-							$fields[] = ['name' => $prefix.'company_fax', 'label' => 'fax'];
-							$fields[] = ['name' => $prefix.'company_email', 'label' => 'email'];
-							$fields[] = ['name' => $prefix.'company_uid', 'label' => 'uid'];
-							$fields[] = ['name' => $prefix.'company_vat', 'label' => 'vat'];
-							$fields[] = ['name' => $prefix.'company_address_street', 'label' => 'street'];
-							$fields[] = ['name' => $prefix.'company_address_street_number', 'label' => 'street_number'];
-							$fields[] = ['name' => $prefix.'company_address_post_office_box_number', 'label' => 'post_office_box_number'];
-							$fields[] = ['name' => $prefix.'company_address_postal_code', 'label' => 'postal_code'];
-							$fields[] = ['name' => $prefix.'company_address_locality', 'label' => 'locality'];
+							$fields[] = [
+								'name' => $prefix.'company_legal_name',
+								'label' => 'Firma / Organisation',
+								'placeholder' => '',
+								'type' => 'text',
+								'intructions' => '',
+							];
+							$fields[] = [
+								'name' => $prefix.'company_phone',
+								'label' => 'Telefon',
+								'placeholder' => '',
+								'type' => 'text',
+								'intructions' => '',
+							];
+							$fields[] = [
+								'name' => $prefix.'company_fax',
+								'label' => 'Fax',
+								'placeholder' => '',
+								'type' => 'text',
+								'intructions' => '',
+							];
+							$fields[] = [
+								'name' => $prefix.'company_email',
+								'label' => 'E-Mail',
+								'placeholder' => '',
+								'type' => 'text',
+								'intructions' => '',
+							];
+							$fields[] = [
+								'name' => $prefix.'company_website_url',
+								'label' => 'Webseite',
+								'placeholder' => '',
+								'type' => 'text',
+								'intructions' => '',
+							];
+							$fields[] = [
+								'name' => $prefix.'company_uid',
+								'label' => 'UID',
+								'placeholder' => 'CHE-',
+								'type' => 'text',
+								'intructions' => '',
+							];
+							$fields[] = [
+								'name' => $prefix.'company_vat',
+								'label' => 'MWST',
+								'placeholder' => '',
+								'type' => 'bool',
+								'intructions' => 'Plichtig',
+							];
+							$fields[] = [
+								'name' => $prefix.'company_address_street',
+								'label' => 'Strasse',
+								'placeholder' => '',
+								'type' => 'text',
+								'intructions' => '',
+							];
+							$fields[] = [
+								'name' => $prefix.'company_address_street_number',
+								'label' => 'Nr.',
+								'placeholder' => '',
+								'type' => 'text',
+								'intructions' => '',
+							];
+							$fields[] = [
+								'name' => $prefix.'company_address_post_office_box_number',
+								'label' => 'Postfach',
+								'placeholder' => '',
+								'type' => 'text',
+								'intructions' => '',
+							];
+							$fields[] = [
+								'name' => $prefix.'company_address_postal_code',
+								'label' => 'PLZ',
+								'placeholder' => '',
+								'type' => 'text',
+								'intructions' => '',
+							];
+							$fields[] = [
+								'name' => $prefix.'company_address_locality',
+								'label' => 'Ort',
+								'placeholder' => '',
+								'type' => 'text',
+								'intructions' => '',
+							];
 							foreach ($fields as $field) : ?>
+								<?php $name = $field['name']; ?>
+								<?php $text = $field['label']; ?>
 								<tr valign="top">
 									<th scope="row"><?= $field['label'] ?></th>
 									<td>
-										<fieldset>
-											<?php $name = $field['name']; ?>
-											<?php $text = $field['label']; ?>
-											<legend class="screen-reader-text"><span><?= $text ?></span></legend>
-											<p>
-												<input type="text" placeholder="" name="<?php echo $name ?>" value="<?= get_option($name) ?>" id="<?php echo $name; ?>" class="large-text" />
-											</p>
-										</fieldset>
+										<?php if ($field['type'] === 'text'): ?>
+											<fieldset>
+												<legend class="screen-reader-text"><span><?= $text ?></span></legend>
+												<p>
+													<input type="text" placeholder="<?= $field['placeholder'] ?>" name="<?php echo $name ?>" value="<?= get_option($name) ?>" id="<?php echo $name; ?>" class="large-text" />
+												</p>
+											</fieldset>
+										<?php elseif ($field['type'] === 'bool'): ?>
+											<fieldset>
+												<legend class="screen-reader-text"><span><?= $text ?></span></legend>
+												<label>
+													<input name="<?php echo $name ?>" type="checkbox" value="1" <?php echo (get_option($name) == '1' ? 'checked="checked"' : ''); ?>> <?php echo $field['intructions'] ?>
+												</label>
+										<?php endif ?>
 									</td>
 								</tr>
 							<?php endforeach ?>

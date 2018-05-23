@@ -17,6 +17,7 @@ class Admin {
 		add_option($prefix.'company_phone', null);
 		add_option($prefix.'company_fax', null);
 		add_option($prefix.'company_email', null);
+		add_option($prefix.'company_website_url', null);
 		add_option($prefix.'company_uid', null);
 		add_option($prefix.'company_vat', null);
 		add_option($prefix.'company_address_street', null);
