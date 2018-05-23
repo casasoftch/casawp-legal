@@ -16,8 +16,9 @@
 
 	if (isset($_POST['casawp_fetchdata_from_casaauth'])) {
 		echo '<div class="updated"><p><strong>' . __('fetchito dati a la casaautheto', 'casawp-legal' ) . '</strong></p></div>';
-		$gateway_provider_key = $_POST['casawp_gateway_private_key'];
+		$gateway_private_key = $_POST['casawp_gateway_private_key'];
 		$gateway_public_key = $_POST['casawp_gateway_public_key'];
+		global $casawpLegal;
 		$casawpLegal->fetchCompanyDataFromGateway($gateway_private_key, $gateway_public_key);
 	}
 
@@ -131,13 +132,18 @@
 							Fetch Data from CASAAUTH
 						</th>
 						<td>
-							<br><strong>CASAGATEWAY provider</strong>
-							<br><input style="width: 100%" type="text" name="casawp_gateway_public_key" value="" placeholder="API Public Key" />
-							<br><input style="width: 100%" type="text" name="casawp_gateway_private_key" value="" placeholder="API Private Key" />
+							<label>CASAGATEWAY provider API Public Key</label>
+							<br><input style="width: 100%" type="text" name="casawp_gateway_public_key" value="<?= (isset($_POST['casawp_gateway_public_key']) ? $_POST['casawp_gateway_public_key'] : ''); ?>" placeholder="CASAGATEWAY provider API Public Key" />
+							<br>
+							<br>
+							<label>CASAGATEWAY provider API Private Key</label>
+							<br><input style="width: 100%" type="text" name="casawp_gateway_private_key" value="<?= (isset($_POST['casawp_gateway_private_key']) ? $_POST['casawp_gateway_private_key'] : ''); ?>" placeholder="CASAGATEWAY provider API Private Key" />
+							<br>
 							<br><input type="submit" name="casawp_fetchdata_from_casaauth" id="submit" class="button button-primary" value="Go!">
 							<br><small>Tries to fetch the data from casaauth servers (only fills empty fields!)</small>
 						</td>
 					</tr>
+					<tr><th><hr></th><td><hr></td></tr>
 					<?php echo $table_end; ?>
 					<?php break;
 				case 'person': ?>

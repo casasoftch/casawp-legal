@@ -173,7 +173,7 @@ class Plugin {
             'post_title' => (array_key_exists($main_lang, $this->translations['imprint']) ? $this->translations['imprint'][$main_lang] : 'imprint'),
             'post_status' => 'publish',
             'post_author'   => 1,
-            'post_content'  => '<p>...</p>',
+            'post_content'  => '<p style="display:none">&nbsp;</p>',
             'post_type' => 'page'
           ));
           if (is_admin()) {
@@ -246,7 +246,10 @@ class Plugin {
     }
 
     public function fetchCompanyDataFromGateway($private_key, $public_key){
-      
+      if (is_admin()) {
+        echo '<div class="updated"><p><strong>' . __('Fetching data', 'casawp' ) . '</strong></p></div>';
+      }
+      print_r([$private_key, $public_key]);
     }
 
     public function legalPageRenders($content){
