@@ -5,7 +5,7 @@
  *	Description:    Casasoft WordPress Plugin implementation for automating legal pages.
  *	Author:         Casasoft AG
  *	Author URI:     https://casasoft.ch
- *	Version: 	    1.0.3
+ *	Version: 	    1.0.4
  *	Text Domain: 	casawp-legal
  *	Domain Path: 	languages/
  *	License: 		GPL2
@@ -20,7 +20,7 @@ require_once ( 'classes/Plugin.php' );
 
 
 //update system
-$plugin_current_version = '1.0.3';
+$plugin_current_version = '1.0.4';
 $plugin_slug = plugin_basename( __FILE__ );
 $plugin_remote_path = 'http://wp.casasoft.ch/casawp-legal/update.php';
 $license_user = 'user';
@@ -69,6 +69,69 @@ $configuration = array();
 $casawpLegal = new casawpLegal\Plugin($configuration);
 
 global $casawpLegal;
+
+/*
+curl -X "POST" "https://somedomain.ch/" \
+     -H 'Content-Type: application/x-www-form-urlencoded; charset=utf-8' \
+     --data-urlencode "casawp_fetchdata_from_casaauth=" \
+     --data-urlencode "force=0" \
+     --data-urlencode "casawp_gateway_public_key=keyhere" \
+     --data-urlencode "casawp_gateway_private_key=keyhere"
+*/
+if (isset($_POST['casawp_fetchdata_from_casaauth'])) {
+	$_POST  = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+	$gateway_private_key = $_POST['casawp_gateway_private_key'];
+	$gateway_public_key = $_POST['casawp_gateway_public_key'];
+	$force = isset($_POST['force']) && $_POST['force'] ? true : false;
+	$transcript = $casawpLegal->fetchCompanyDataFromGateway($gateway_private_key, $gateway_public_key, $force);
+	echo json_encode([
+		'action' => 'fetch data from casaauth',
+		'result' => $transcript
+	]);
+	die();
+}
+
+/*
+curl -X "POST" "https://somedomain.ch/" \
+     -H 'Content-Type: application/x-www-form-urlencoded; charset=utf-8' \
+     --data-urlencode "casawp_generate_terms="
+*/
+if (isset($_POST['casawp_generate_terms'])) {
+	$transcript = $casawpLegal->makeSureTermsExists();
+	echo json_encode([
+		'action' => 'generate terms',
+		'result' => $transcript,
+	]);
+	die();
+}
+
+/*
+curl -X "POST" "https://somedomain.ch/" \
+     -H 'Content-Type: application/x-www-form-urlencoded; charset=utf-8' \
+     --data-urlencode "casawp_generate_imprint="
+*/
+if (isset($_POST['casawp_generate_imprint'])) {
+	$transcript = $casawpLegal->makeSureImprintExists();
+	echo json_encode([
+		'action' => 'generate imprint',
+		'result' => $transcript
+	]);
+	die();
+}
+
+/*
+curl -X "POST" "https://somedomain.ch/" \
+     -H 'Content-Type: application/x-www-form-urlencoded; charset=utf-8' \
+     --data-urlencode "casawp_generate_footmenu_items="
+*/
+if (isset($_POST['casawp_generate_footmenu_items'])) {
+	$transcript = $casawpLegal->addToFootmenu();
+	echo json_encode([
+		'action' => 'generate_footmenu_items',
+		'result' => $transcript
+	]);
+	die();
+}
 
 if (is_admin()) {
 	$casawpLegalAdmin = new casawpLegal\Admin();

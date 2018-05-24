@@ -67,10 +67,33 @@
 </ul>
 <h2 id="term_6">Verantwortung</h2>
 <p>Verantwortlich für die Erhebung, Verarbeitung und Nutzung Ihrer personenbezogenen Daten ist:</p>
-<p>{{company.legal_name}}<br>
-{{address.street}} {{address.street_number}}<br>
-{{address.post_office_box_number}}<br>
-{{address.postal_code}} {{address.locality}}</p>
+<p>
+	{{company.legal_name}}
+
+	{{#address.street}}
+		<br>{{address.street}} {{address.street_number}}
+	{{/address.street}}
+
+	{{#address.post_office_box_number}}
+		<br>{{address.post_office_box_number}}
+	{{/address.post_office_box_number}}
+
+	{{#address.postal_code}}
+		<br>{{address.postal_code}} {{address.locality}}
+	{{/address.postal_code}}
+
+	{{#address.country}}
+		<br>{{address.country}}
+	{{/address.country}}
+</p>
+
+{{#person}}
 <p>Die Datenschutzbeauftragte Person ist:</p>
 <p>{{person.first_name}} {{person.last_name}} <a href="mailto:{{person.email}}">{{person.email}}</a></p>
+{{/person}}
+
 <p>Sofern Sie der Erhebung, Verarbeitung oder Nutzung Ihrer Daten durch uns nach Massgabe dieser Daten-schutzbestimmungen insgesamt oder für einzelne Massnahmen widersprechen wollen, können Sie Ihren Wider-spruch an den Verantwortlichen richten.</p>
+
+
+
+

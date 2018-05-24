@@ -80,9 +80,11 @@ class Plugin {
   }
 
   public function addToFootmenu(){
+    $transcript['msgs'] = [];
     if (is_admin()) {
       echo '<div class="updated"><p><strong>' . __('Gennerating menu items', 'casawp' ) . '</strong></p></div>';
     }
+    $transcript['msgs'][] = "gennerating foot menu and items";
 
     $imprintpage = get_option('casawp_legal_imprint', false);
     $termspage = get_option('casawp_legal_terms', false);
@@ -140,15 +142,15 @@ class Plugin {
         }
     }
 
-
+    return $transcript;
   }
 
-    public function makeSurePagesExist(){
+    public function makeSureTermsExists(){
+      $transcript['msgs'] = [];
       if (is_admin()) {
-        echo '<div class="updated"><p><strong>' . __('Gennerating pages', 'casawp' ) . '</strong></p></div>';
+        echo '<div class="updated"><p><strong>' . __('Gennerating term page', 'casawp' ) . '</strong></p></div>';
       }
-      
-
+      $transcript['msgs'][] = "gennerating term page";
       
       $main_lang = 'de';
       if (function_exists('icl_object_id') ) {
@@ -156,50 +158,6 @@ class Plugin {
         if ($wpml_options) {
           $main_lang = $wpml_options['default_language'];
         }
-      }
-
-      $imprintpage = get_option('casawp_legal_imprint', false);
-      // if ($imprintpage) {
-      //   $imprintpagepost = get_post($imprintpage);
-      // }
-      
-      if ( 'publish' != get_post_status ( $imprintpage ) ) {
-        $imprintpage = false;
-      }
-      if (!$imprintpage) {
-        $page = get_page_by_title('Impressum');
-        if (!$page) {
-          $pageId = wp_insert_post(array(
-            'post_title' => (array_key_exists($main_lang, $this->translations['imprint']) ? $this->translations['imprint'][$main_lang] : 'imprint'),
-            'post_status' => 'publish',
-            'post_author'   => 1,
-            'post_content'  => '<p style="display:none">&nbsp;</p>',
-            'post_type' => 'page'
-          ));
-          if (is_admin()) {
-            echo '<div class="updated"><p><strong>' . __('Gennerated imprint page', 'casawp' ) . ' ' .$pageId . '</strong></p></div>';
-          }
-          if (function_exists('icl_object_id') && get_option( 'icl_sitepress_settings', false )) {
-            foreach (array_keys($this->translations['imprint']) as $altLang) {
-              if ($altLang !== $main_lang) {
-                $altPageId = wp_insert_post(array(
-                  'post_title' => $this->translations['imprint'][$altLang],
-                  'post_status' => 'publish',
-                  'post_author'   => 1,
-                  'post_content'  => '<p style="display:none">&nbsp;</p>',
-                  'post_type' => 'page'
-                ));
-                $this->wpml_connect_page($pageId, $altPageId, $altLang);  
-                if (is_admin()) {
-                  echo '<div class="updated"><p><strong>' . __('Gennerated imprint page', 'casawp' ) . ' for ' . $altLang . ' ' .$altPageId . '</strong></p></div>';
-                }
-              }
-            }
-          }
-        } else {
-          $pageId = $page->ID;
-        }
-        update_option('casawp_legal_imprint', $pageId);
       }
 
       $termspage = get_option('casawp_legal_terms', false);
@@ -220,6 +178,7 @@ class Plugin {
           if (is_admin()) {
             echo '<div class="updated"><p><strong>' . __('Gennerated terms page', 'casawp' ) . ' ' .$pageId . '</strong></p></div>';
           }
+          $transcript['msgs'][] = "gennerated terms page". ' ' .$pageId;
           if (function_exists('icl_object_id') && get_option( 'icl_sitepress_settings', false )) {
             foreach (array_keys($this->translations['terms']) as $altLang) {
               if ($altLang !== $main_lang) {
@@ -234,16 +193,83 @@ class Plugin {
                 if (is_admin()) {
                   echo '<div class="updated"><p><strong>' . __('Gennerated terms page', 'casawp' ) . ' for ' . $altLang . ' ' .$altPageId . '</strong></p></div>';
                 }
+                $transcript['msgs'][] = "gennerated terms page" . ' for ' . $altLang . ' ' .$altPageId;
               }
             }
           }
           
         } else {
           $pageId = $page->ID;
+          $transcript['msgs'][] = "page already existed> " . $pageId;
         }
         update_option('casawp_legal_terms', $pageId);
       }
+
+      return $transcript;
     }
+
+    public function makeSureImprintExists(){
+      $transcript['msgs'] = [];
+      if (is_admin()) {
+        echo '<div class="updated"><p><strong>' . __('Gennerating imprint page', 'casawp' ) . '</strong></p></div>';
+      }
+      $transcript['msgs'][] = "gennerating imprint page";
+      
+      $main_lang = 'de';
+      if (function_exists('icl_object_id') ) {
+        $wpml_options = get_option( 'icl_sitepress_settings', false);
+        if ($wpml_options) {
+          $main_lang = $wpml_options['default_language'];
+        }
+      }
+
+      $imprintpage = get_option('casawp_legal_imprint', false);
+      if ( 'publish' != get_post_status ( $imprintpage ) ) {
+        $imprintpage = false;
+      }
+      if (!$imprintpage) {
+        $page = get_page_by_title('Impressum');
+        if (!$page) {
+          $pageId = wp_insert_post(array(
+            'post_title' => (array_key_exists($main_lang, $this->translations['imprint']) ? $this->translations['imprint'][$main_lang] : 'imprint'),
+            'post_status' => 'publish',
+            'post_author'   => 1,
+            'post_content'  => '<p style="display:none">&nbsp;</p>',
+            'post_type' => 'page'
+          ));
+          if (is_admin()) {
+            echo '<div class="updated"><p><strong>' . __('Gennerated imprint page', 'casawp' ) . ' ' .$pageId . '</strong></p></div>';
+          }
+          $transcript['msgs'][] = "gennerated imprint page". ' ' .$pageId;
+          if (function_exists('icl_object_id') && get_option( 'icl_sitepress_settings', false )) {
+            foreach (array_keys($this->translations['imprint']) as $altLang) {
+              if ($altLang !== $main_lang) {
+                $altPageId = wp_insert_post(array(
+                  'post_title' => $this->translations['imprint'][$altLang],
+                  'post_status' => 'publish',
+                  'post_author'   => 1,
+                  'post_content'  => '<p style="display:none">&nbsp;</p>',
+                  'post_type' => 'page'
+                ));
+                $this->wpml_connect_page($pageId, $altPageId, $altLang);  
+                if (is_admin()) {
+                  echo '<div class="updated"><p><strong>' . __('Gennerated imprint page', 'casawp' ) . ' for ' . $altLang . ' ' .$altPageId . '</strong></p></div>';
+                }
+                $transcript['msgs'][] = "gennerated imprint page" . ' for ' . $altLang . ' ' .$altPageId;
+              }
+            }
+          }
+        } else {
+          $pageId = $page->ID;
+          $transcript['msgs'][] = "page already existed> " . $pageId;
+        }
+        update_option('casawp_legal_imprint', $pageId);
+      }
+
+      return $transcript;
+    }
+
+
 
     public function doReq($apikey, $privateKey, $options, $apiurl){
         //specify the current UnixTimeStamp
@@ -305,20 +331,24 @@ class Plugin {
         );
     }
 
-    public function updateFieldIfEmpty($field, $value) {
-      if (!get_option($field, false)) {
+    public function updateFieldIfEmpty($field, $value, $forced = false) {
+      if ($forced || !get_option($field, false)) {
         update_option( $field, $value );
         if (is_admin()) {
           echo '<div class="updated"><p>updated Field: ' . $field . ' with value ' . $value . '</p></div>';
         } 
+        return 'updated Field: ' . $field . ' with value ' . $value;
+      } else {
+        return 'skipped Field: ' . $field;
       }
     }
 
-    public function fetchCompanyDataFromGateway($private_key, $public_key){
+    public function fetchCompanyDataFromGateway($private_key, $public_key, $forced = false){
+      $transcript = [];
       if (is_admin()) {
         echo '<div class="updated"><p><strong>' . __('Fetching data', 'casawp' ) . '</strong></p></div>';
       }
-      print_r([$private_key, $public_key]);
+      $transcript['msgs'][] = print_r('Fetching data', true);
 
       $request = array(
           'apiurl' => 'http://casagateway.ch/rest/fetch-company-data-with-provider-key',
@@ -331,68 +361,106 @@ class Plugin {
 
       $result = $this->doReq($request['apikey'], $request['privatekey'], $request['options'], $request['apiurl']);
 
-      if (is_admin()) {
-        //echo '<div class="updated"><p>'.print_r($result, true).'</div>';
-      }
-
       if (isset($result['response']) && $result['response']) {
         $response = json_decode($result['response'], true);
         if ($response && isset($response['companies']) && $response['companies'] && isset($response['companies'][0])) {
+          $transcript['msgs'][] = 'successfully connected to casagateway and casaauth';
           if (is_admin()) {
             echo '<div class="updated"><p>'.print_r($response['companies'][0], true).'</div>';
           } 
+          $transcript['msgs'][] = print_r($response['companies'][0], true);
+
           $prefix = 'casawp_legal_';
 
           if (isset($response['companies'][0]['legalName']) && $response['companies'][0]['legalName']) {
             $field = $prefix . 'company_legal_name';
-            $this->updateFieldIfEmpty($field, $response['companies'][0]['legalName']);
+            $transcript['msgs'][] = $this->updateFieldIfEmpty($field, $response['companies'][0]['legalName'], $forced);
           }
           if (isset($response['companies'][0]['phone']) && $response['companies'][0]['phone']) {
             $field = $prefix . 'company_phone';
-            $this->updateFieldIfEmpty($field, $response['companies'][0]['phone']);
+            $transcript['msgs'][] = $this->updateFieldIfEmpty($field, $response['companies'][0]['phone'], $forced);
           }
           if (isset($response['companies'][0]['fax']) && $response['companies'][0]['fax']) {
             $field = $prefix . 'company_fax';
-            $this->updateFieldIfEmpty($field, $response['companies'][0]['fax']);
+            $transcript['msgs'][] = $this->updateFieldIfEmpty($field, $response['companies'][0]['fax'], $forced);
           }
           if (isset($response['companies'][0]['email']) && $response['companies'][0]['email']) {
             $field = $prefix . 'company_email';
-            $this->updateFieldIfEmpty($field, $response['companies'][0]['email']);
+            $transcript['msgs'][] = $this->updateFieldIfEmpty($field, $response['companies'][0]['email'], $forced);
           }
           if (isset($response['companies'][0]['websiteUrl']) && $response['companies'][0]['websiteUrl']) {
             $field = $prefix . 'company_website_url';
-            $this->updateFieldIfEmpty($field, $response['companies'][0]['websiteUrl']);
+            $transcript['msgs'][] = $this->updateFieldIfEmpty($field, $response['companies'][0]['websiteUrl'], $forced);
           }
-          //add_option($prefix.'company_uid', null);
-          //add_option($prefix.'company_vat', null);
+          if (isset($response['companies'][0]['uid']) && $response['companies'][0]['uid']) {
+            $field = $prefix . 'company_company_uid';
+            $transcript['msgs'][] = $this->updateFieldIfEmpty($field, $response['companies'][0]['uid'], $forced);
+          }
+          if (isset($response['companies'][0]['vat']) && $response['companies'][0]['vat']) {
+            $field = $prefix . 'company_company_vat';
+            $transcript['msgs'][] = $this->updateFieldIfEmpty($field, $response['companies'][0]['vat'], $forced);
+          }
           if (isset($response['companies'][0]['address']) && $response['companies'][0]['address'] && $response['companies'][0]['address']['street']) {
             $field = $prefix . 'company_address_street';
-            $this->updateFieldIfEmpty($field, $response['companies'][0]['address']['street']);
+            $transcript['msgs'][] = $this->updateFieldIfEmpty($field, $response['companies'][0]['address']['street'], $forced);
           }
           if (isset($response['companies'][0]['address']) && $response['companies'][0]['address'] && $response['companies'][0]['address']['streetNumber']) {
             $field = $prefix . 'company_address_street_number';
-            $this->updateFieldIfEmpty($field, $response['companies'][0]['address']['streetNumber']);
+            $transcript['msgs'][] = $this->updateFieldIfEmpty($field, $response['companies'][0]['address']['streetNumber'], $forced);
           }
           if (isset($response['companies'][0]['address']) && $response['companies'][0]['address'] && $response['companies'][0]['address']['postOfficeBoxNumber']) {
             $field = $prefix . 'company_address_post_office_box_number';
-            $this->updateFieldIfEmpty($field, $response['companies'][0]['address']['postOfficeBoxNumber']);
+            $transcript['msgs'][] = $this->updateFieldIfEmpty($field, $response['companies'][0]['address']['postOfficeBoxNumber'], $forced);
           }
           if (isset($response['companies'][0]['address']) && $response['companies'][0]['address'] && $response['companies'][0]['address']['postalCode']) {
             $field = $prefix . 'company_address_postal_code';
-            $this->updateFieldIfEmpty($field, $response['companies'][0]['address']['postalCode']);
+            $transcript['msgs'][] = $this->updateFieldIfEmpty($field, $response['companies'][0]['address']['postalCode'], $forced);
           }
           if (isset($response['companies'][0]['address']) && $response['companies'][0]['address'] && $response['companies'][0]['address']['locality']) {
             $field = $prefix . 'company_address_locality';
-            $this->updateFieldIfEmpty($field, $response['companies'][0]['address']['locality']);
+            $transcript['msgs'][] = $this->updateFieldIfEmpty($field, $response['companies'][0]['address']['locality'], $forced);
           }
-          //add_option($prefix.'company_person_first_name', null);
-          //add_option($prefix.'company_person_last_name', null);
-          //add_option($prefix.'company_person_email', null);
+          if (isset($response['companies'][0]['address']) && $response['companies'][0]['address'] && $response['companies'][0]['address']['country']) {
+            $field = $prefix . 'company_address_country';
+            $transcript['msgs'][] = $this->updateFieldIfEmpty($field, $response['companies'][0]['address']['country'], $forced);
+          }
+          if (isset($response['companies'][0]['legalPerson']) && $response['companies'][0]['legalPerson'] && $response['companies'][0]['legalPerson']['firstName']) {
+            $field = $prefix . 'company_person_first_name';
+            $transcript['msgs'][] = $this->updateFieldIfEmpty($field, $response['companies'][0]['legalPerson']['firstName'], $forced);
+          }
+          if (isset($response['companies'][0]['legalPerson']) && $response['companies'][0]['legalPerson'] && $response['companies'][0]['legalPerson']['lastName']) {
+            $field = $prefix . 'company_person_last_name';
+            $transcript['msgs'][] = $this->updateFieldIfEmpty($field, $response['companies'][0]['legalPerson']['lastName'], $forced);
+          }
+          if (isset($response['companies'][0]['legalPerson']) && $response['companies'][0]['legalPerson'] && $response['companies'][0]['legalPerson']['email']) {
+            $field = $prefix . 'company_person_email';
+            $transcript['msgs'][] = $this->updateFieldIfEmpty($field, $response['companies'][0]['legalPerson']['email'], $forced);
+          }
 
+        } else {
+          $transcript['msgs'][] = 'no companies in response';
+          $transcript['msgs'][] = $result;
         }
        
+      } else {
+        $transcript['msgs'][] = 'falsy response';
       }
 
+      return $transcript;
+
+    }
+
+    static function countryIsoToLang($country){
+      if ($country === "CH") {
+        $country = "Schweiz";
+      }
+      if ($country === "LI") {
+        $country = "Liechtenstein";
+      }
+      if ($country === "FL") {
+        $country = "Liechtenstein";
+      }
+      return $country;
     }
 
     public function legalPageRenders($content){
@@ -413,6 +481,7 @@ class Plugin {
           } else {
             $template_file = CASAWP_LEGAL_PLUGIN_DIR . 'templates/imprint-de.html';
           }
+          
           $content .= '<div class="casawp-legal__page casawp-legal__page--imprint">'.$this->m->render(
             file_get_contents($template_file), 
             array(
@@ -431,6 +500,7 @@ class Plugin {
                 'post_office_box_number' => get_option($prefix.'company_address_post_office_box_number', null),
                 'postal_code' => get_option($prefix.'company_address_postal_code', null),
                 'locality' => get_option($prefix.'company_address_locality', null),
+                'country' => $this->countryIsoToLang(get_option($prefix.'company_address_country', null)),
               ],
               'person' => [
                 'first_name' => get_option($prefix.'company_person_first_name', null),
@@ -445,6 +515,21 @@ class Plugin {
             $template_file = CASAWP_LEGAL_PLUGIN_DIR . 'templates/terms-'.$this->locale.'.html';
           } else {
             $template_file = CASAWP_LEGAL_PLUGIN_DIR . 'templates/terms-de.html';
+          }
+          $person = [
+            'first_name' => get_option($prefix.'company_person_first_name', null),
+            'last_name' => get_option($prefix.'company_person_last_name', null),
+            'email' => get_option($prefix.'company_person_email', null),
+          ];
+          $person_is_empty = true;
+          foreach ($person as $key => $value) {
+            if ($value) {
+              $person_is_empty = false;
+              break;
+            }
+          }
+          if ($person_is_empty) {
+            $person = null;
           }
           $content .= '<div class="casawp-legal__page casawp-legal__page--terms">'.$this->m->render(
             file_get_contents($template_file), 
@@ -464,12 +549,9 @@ class Plugin {
                 'post_office_box_number' => get_option($prefix.'company_address_post_office_box_number', null),
                 'postal_code' => get_option($prefix.'company_address_postal_code', null),
                 'locality' => get_option($prefix.'company_address_locality', null),
+                'country' => $this->countryIsoToLang(get_option($prefix.'company_address_country', null)),
               ],
-              'person' => [
-                'first_name' => get_option($prefix.'company_person_first_name', null),
-                'last_name' => get_option($prefix.'company_person_last_name', null),
-                'email' => get_option($prefix.'company_person_email', null),
-              ]
+              'person' => $person
             )
           ).'</div>';
           break;

@@ -22,6 +22,10 @@ Stable tag: 1.0.3
 
 == Changelog ==
 
+= 1.0.4 =
+* new: external post update
+* update: lots
+
 = 1.0.3 =
 * new: sync data from casagateway provider company -> aka. casaauth
 
