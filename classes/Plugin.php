@@ -393,11 +393,11 @@ class Plugin {
             $transcript['msgs'][] = $this->updateFieldIfEmpty($field, $response['companies'][0]['websiteUrl'], $forced);
           }
           if (isset($response['companies'][0]['uid']) && $response['companies'][0]['uid']) {
-            $field = $prefix . 'company_company_uid';
+            $field = $prefix . 'company_uid';
             $transcript['msgs'][] = $this->updateFieldIfEmpty($field, $response['companies'][0]['uid'], $forced);
           }
           if (isset($response['companies'][0]['vat']) && $response['companies'][0]['vat']) {
-            $field = $prefix . 'company_company_vat';
+            $field = $prefix . 'company_vat';
             $transcript['msgs'][] = $this->updateFieldIfEmpty($field, $response['companies'][0]['vat'], $forced);
           }
           if (isset($response['companies'][0]['address']) && $response['companies'][0]['address'] && $response['companies'][0]['address']['street']) {

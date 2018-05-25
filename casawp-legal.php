@@ -5,7 +5,7 @@
  *	Description:    Casasoft WordPress Plugin implementation for automating legal pages.
  *	Author:         Casasoft AG
  *	Author URI:     https://casasoft.ch
- *	Version: 	    1.0.4
+ *	Version: 	    1.0.6
  *	Text Domain: 	casawp-legal
  *	Domain Path: 	languages/
  *	License: 		GPL2
@@ -20,7 +20,7 @@ require_once ( 'classes/Plugin.php' );
 
 
 //update system
-$plugin_current_version = '1.0.4';
+$plugin_current_version = '1.0.6';
 $plugin_slug = plugin_basename( __FILE__ );
 $plugin_remote_path = 'http://wp.casasoft.ch/casawp-legal/update.php';
 $license_user = 'user';
