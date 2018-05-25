@@ -18,7 +18,9 @@
 	{{/address.country}}
 </p>
 <p>
-	Tel {{company.phone}}
+	{{#company.phone}}
+		Tel {{company.phone}}
+	{{/company.phone}}
 	{{#company.fax}}
 		<br>Fax {{company.fax}}
 	{{/company.fax}}

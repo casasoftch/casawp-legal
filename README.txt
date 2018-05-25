@@ -7,7 +7,7 @@ Tested up to: 4.9.6
 Author: Casasoft AG
 Author URI: https://casasoft.ch
 License: GPL2
-Stable tag: 1.0.3
+Stable tag: 1.0.4
 
 == Description ==
 
