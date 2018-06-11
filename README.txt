@@ -7,7 +7,7 @@ Tested up to: 4.9.6
 Author: Casasoft AG
 Author URI: https://casasoft.ch
 License: GPL2
-Stable tag: 1.0.7
+Stable tag: 1.0.8
 
 == Description ==
 
@@ -21,6 +21,9 @@ Stable tag: 1.0.7
 3. Check out yourdomain.com/impressum to verify that it works
 
 == Changelog ==
+
+= 1.0.7 =
+* fix: italian terms headers were english
 
 = 1.0.7 =
 * new: added translation for en/fr/it for imprint and terms
