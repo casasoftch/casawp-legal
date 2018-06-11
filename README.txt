@@ -22,7 +22,7 @@ Stable tag: 1.0.8
 
 == Changelog ==
 
-= 1.0.7 =
+= 1.0.8 =
 * fix: italian terms headers were english
 
 = 1.0.7 =
