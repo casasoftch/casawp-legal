@@ -602,15 +602,15 @@ class Plugin {
     }
 
     public function setTranslation(){
-        $locale = get_locale();
+        // $locale = get_locale();
 
-        switch (substr($locale, 0, 2)) {
-            case 'de': $locale = 'de_DE'; break;
-            case 'en': $locale = 'en_US'; break;
-            case 'it': $locale = 'it_CH'; break;
-            case 'fr': $locale = 'fr_CH'; break;
-            default: $locale = 'de_DE'; break;
-        }
+        // switch (substr($locale, 0, 2)) {
+        //     case 'de': $locale = 'de_DE'; break;
+        //     case 'en': $locale = 'en_US'; break;
+        //     case 'it': $locale = 'it_CH'; break;
+        //     case 'fr': $locale = 'fr_CH'; break;
+        //     default: $locale = 'de_DE'; break;
+        // }
 
 
         //$locale_file = get_template_directory_uri() . "/includes/languages/$locale.php";
@@ -618,7 +618,11 @@ class Plugin {
         if ( is_readable( $locale_file ) ) {
             require_once( $locale_file );
         }*/
-        load_plugin_textdomain('casawp-legal', false, '/casawp-legal/languages/' );
+        // load_plugin_textdomain('casawp-legal', false, '/casawp-legal/languages/' );
+
+        if (ICL_LANGUAGE_CODE) {
+          $this->locale = ICL_LANGUAGE_CODE;
+        }
     }
 
     function setUploadDir($upload) {
