@@ -3,6 +3,9 @@
     list-style-type: none;
     counter-reset: section;
 }
+.casawp-legal__page--terms > ol{
+    padding: 0;
+}
 .casawp-legal__page--terms ol li
 {
     counter-increment: section;
