@@ -53,8 +53,9 @@
 		}
 
 		//reset
-
+		
 		foreach ($checkbox_traps as $trap) {
+
 			if (!isset($_POST[$trap])) {
 				update_option( $trap, '0' );
 			}
@@ -213,6 +214,7 @@
 											<fieldset>
 												<legend class="screen-reader-text"><span><?= $text ?></span></legend>
 												<label>
+													<input name="<?php echo $name ?>" type="hidden" value="0">
 													<input name="<?php echo $name ?>" type="checkbox" value="1" <?php echo (get_option($name) == '1' ? 'checked="checked"' : ''); ?>> <?php echo $field['intructions'] ?>
 												</label>
 										<?php endif ?>
@@ -377,6 +379,7 @@
 											<fieldset>
 												<legend class="screen-reader-text"><span><?= $text ?></span></legend>
 												<label>
+													<input name="<?php echo $name ?>" type="hidden" value="0">
 													<input name="<?php echo $name ?>" type="checkbox" value="1" <?php echo (get_option($name) == '1' ? 'checked="checked"' : ''); ?>> <?php echo $field['intructions'] ?>
 												</label>
 										<?php endif ?>
