@@ -61,7 +61,7 @@ define('CASAWP_LEGAL_CUR_UPLOAD_URL', $upload['url'] );
 define('CASAWP_LEGAL_CUR_UPLOAD_BASEDIR', $upload['basedir'] );
 define('CASAWP_LEGAL_CUR_UPLOAD_BASEURL', $upload['baseurl'] );
 
-chdir(dirname(__DIR__));
+// chdir(dirname(__DIR__));
 
 // Setup autoloading
 include 'vendor/autoload.php';
