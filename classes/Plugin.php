@@ -50,7 +50,7 @@ class Plugin {
         //add_action('after_setup_theme', array($this, 'makeSurePagesExist') );
 
         // hook failed login
-        add_action( 'wp_login_failed', array($this, 'privateUserRedirectToOrigin') );
+        #add_action( 'wp_login_failed', array($this, 'privateUserRedirectToOrigin') );
 
         // pages
         add_filter('the_content', array($this, 'legalPageRenders'));
