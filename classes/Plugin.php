@@ -470,7 +470,11 @@ class Plugin {
       $default_post_ID = $post_ID;
       if (function_exists('icl_object_id') && get_option( 'icl_sitepress_settings', false )) {
         $options = get_option( 'icl_sitepress_settings' );
-        $default_language = $options['default_language'];
+        if (isset($options['default_language']) && $options['default_language']) {
+          $default_language = $options['default_language'];
+        } else {
+          $default_language = substr(get_bloginfo("language"),0,2);
+        }
         $default_post_ID = apply_filters( 'wpml_object_id', $post_ID, 'page', false, $default_language );
       }
 
