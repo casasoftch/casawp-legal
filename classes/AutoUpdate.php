@@ -83,7 +83,7 @@ class AutoUpdate
 		$remote_version = $this->getRemote_version();
 
 		// If a newer version is available, add the update
-		if ( version_compare( $this->current_version, $remote_version->new_version, '<' ) ) {
+		/* if ( version_compare( $this->current_version, $remote_version->new_version, '<' ) ) {
 			$obj = new \stdClass();
 			$obj->slug = $this->slug;
 			$obj->new_version = $remote_version->new_version;
@@ -91,7 +91,7 @@ class AutoUpdate
 			$obj->plugin = $this->plugin_slug;
 			$obj->package = $remote_version->package;
 			$transient->response[$this->plugin_slug] = $obj;
-		}
+		} */
 		return $transient;
 	}
 
