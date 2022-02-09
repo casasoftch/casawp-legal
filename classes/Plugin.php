@@ -598,8 +598,11 @@ class Plugin {
     }
 
     function registerScriptsAndStyles(){
-        wp_register_style( 'casawp_legal_css', CASAWP_LEGAL_PLUGIN_URL . 'plugin-assets/style.css' );
-        wp_enqueue_style( 'casawp_legal_css' );
+        if (!get_option('casawp_legal_dont_load_css', false)) {
+          wp_register_style( 'casawp_legal_css', CASAWP_LEGAL_PLUGIN_URL . 'plugin-assets/style.css' );
+          wp_enqueue_style( 'casawp_legal_css' );
+        }
+        
         //wp_register_style( 'casawp_legal_css', CASAWP_LEGAL_PLUGIN_URL . 'plugin-assets/global/casawp.css' );
         //wp_enqueue_script('casawp', CASAWP_LEGAL_PLUGIN_URL . 'plugin-assets/global/casawp.js', array( 'jquery' ), false, true );
         //get_option( 'casawp_legal_load_chosen', 1 )

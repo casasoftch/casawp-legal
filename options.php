@@ -361,6 +361,13 @@
 								'type' => 'text',
 								'intructions' => '',
 							];
+							$fields[] = [
+								'name' => $prefix.'dont_load_css',
+								'label' => 'CSS nicht laden',
+								'placeholder' => '',
+								'type' => 'bool',
+								'intructions' => 'Ja',
+							];
 
 							foreach ($fields as $field) : ?>
 								<?php $name = $field['name']; ?>
@@ -382,6 +389,7 @@
 													<input name="<?php echo $name ?>" type="hidden" value="0">
 													<input name="<?php echo $name ?>" type="checkbox" value="1" <?php echo (get_option($name) == '1' ? 'checked="checked"' : ''); ?>> <?php echo $field['intructions'] ?>
 												</label>
+											</fieldset>
 										<?php endif ?>
 									</td>
 								</tr>
