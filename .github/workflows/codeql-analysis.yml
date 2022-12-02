@@ -13,15 +13,22 @@ jobs:
   analyze:
     name: Analyze
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: PHP Composer
-        uses: php-actions/composer@v6
-
-      - name: PHPStan Static Analysis
-        uses: php-actions/phpstan@v3
+      - name: Psalm
+        uses: docker://vimeo/psalm-github-actions
         with:
-          memory_limit: 512M
-          path: classes/ languages/ vendor/
+          security_analysis: true
+          report_file: results.sarif
+
+      - name: Upload Security Analysis results to GitHub
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: results.sarif
+
