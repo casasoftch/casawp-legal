@@ -22,7 +22,7 @@ require_once ( 'classes/Plugin.php' );
 //update system
 $plugin_current_version = '1.0.8';
 $plugin_slug = plugin_basename( __FILE__ );
-$plugin_remote_path = 'http://wp.casasoft.ch/casawp-legal/update.php';
+$plugin_remote_path = 'http://wp.casasoft.com/casawp-legal/update.php';
 $license_user = 'user';
 $license_key = 'abcd';
 new casawpLegal\AutoUpdate( $plugin_current_version, $plugin_remote_path, $plugin_slug, $license_user, $license_key );
