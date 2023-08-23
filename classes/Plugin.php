@@ -37,7 +37,8 @@ class Plugin {
 
     public function __construct($configuration){
         $this->configuration = $configuration;
-        $this->locale = substr(get_bloginfo('language'), 0, 2);
+        #$this->locale = substr(get_bloginfo('language'), 0, 2);
+        add_action('plugins_loaded', array($this, 'initialize_locale'));
         add_filter('icl_set_current_language', array($this, 'wpmlLanguageSwitchedTo'));
         add_action('wp_enqueue_scripts', array($this, 'registerScriptsAndStyles'));
         add_action('wp_enqueue_scripts', array($this, 'setOptionJsVars'));
@@ -56,6 +57,15 @@ class Plugin {
         add_filter('the_content', array($this, 'legalPageRenders'));
         $this->m = new \Mustache_Engine;
 
+    }
+
+    public function initialize_locale() {
+      global $sitepress;
+      if (isset($sitepress)) {
+          $this->locale = $sitepress->get_current_language();
+      } else {
+          $this->locale = substr(get_bloginfo("language"), 0, 2);
+      }
     }
 
     public function wpml_connect_page($original, $translation, $lang) {
