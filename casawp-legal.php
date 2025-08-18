@@ -50,7 +50,7 @@ add_filter( "upgrader_post_install", "casawpLegalPostInstall", 10, 3 );
 
 
 /* Das WP Immobilien-Plugin für Ihre Website importiert Immobilien aus Ihrer Makler-Software! */
-$dummy_desc = __( 'Casasoft WordPress Plugin implementation for automating legal pages.', 'casawp-legal' );
+#$dummy_desc = __( 'Casasoft WordPress Plugin implementation for automating legal pages.', 'casawp-legal' );
 
 define('CASAWP_LEGAL_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('CASAWP_LEGAL_PLUGIN_DIR', plugin_dir_path(__FILE__) . '');
